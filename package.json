@@ -1,0 +1,29 @@
+{
+  "name": "imageshare",
+  "version": "1.0.0",
+  "description": "A screenshot and image share server with instant links",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npm ci && npm run migrate && npm run css:build",
+    "migrate": "knex migrate:latest --knexfile ./knexfile.js",
+    "db:reset": "node -e \"require('fs').rmSync(process.env.DB_PATH || 'db/db.sqlite', {force:true})\" && npm run migrate",
+    "css:build": "tailwindcss -i src/app.css -o public/css/app.css --minify"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^4.0.3",
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
+    "knex": "^3.2.9",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

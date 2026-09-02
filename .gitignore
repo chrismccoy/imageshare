@@ -1,0 +1,5 @@
+node_modules
+db/db.sqlite*
+public/css/app.css
+.env
+uploads/
