@@ -6,7 +6,7 @@ const express = require("express");
 const imageService = require("../services/image");
 const storage = require("../lib/storage");
 const { uploadImage } = require("../middleware/upload");
-const { ValidationError } = require("../lib/errors");
+const { NotFoundError, ValidationError } = require("../lib/errors");
 const { MAX_UPLOAD_BYTES, EXPIRY_YEARS } = require("../config");
 const { createRateLimiter } = require("../middleware/rateLimit");
 
@@ -28,19 +28,24 @@ router.get("/", (_req, res) => {
   });
 });
 
-router.get("/i/:key", (req, res) => {
-  res.render("show", { image: req.image });
-});
+router.get("/i/:key.:extension", (req, res) => {
+  if (req.params.extension !== req.image.extension) {
+    throw new NotFoundError("Image not found");
+  }
 
-router.get("/i/:key/raw", (req, res) => {
   res.set({
     "Content-Type": req.image.mime,
     "X-Content-Type-Options": "nosniff",
     "Content-Disposition": "inline",
     "Cache-Control": "public, max-age=31536000, immutable",
     "Content-Security-Policy": RAW_CSP,
+    "Cross-Origin-Resource-Policy": "cross-origin",
   });
   res.sendFile(storage.pathFor(req.image.storage_name));
+});
+
+router.get("/i/:key", (req, res) => {
+  res.render("show", { image: req.image });
 });
 
 router.post("/i/create", createLimiter, uploadImage, async (req, res) => {

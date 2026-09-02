@@ -3,6 +3,7 @@
  */
 
 const { DAY_IN_SECONDS, YEAR_IN_SECONDS } = require("../config");
+const { extensionFor } = require("../lib/mimetypes");
 
 class Image {
   constructor({
@@ -25,6 +26,14 @@ class Image {
     this.height = height;
     this.expires_at = expires_at;
     this.created_at = created_at;
+  }
+
+  get extension() {
+    return extensionFor(this.mime);
+  }
+
+  get fileUrl() {
+    return `/i/${this.key}.${this.extension}`;
   }
 
   get ttl() {
